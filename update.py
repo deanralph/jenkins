@@ -1,15 +1,14 @@
 import pymssql
 import subprocess
+import json
 from fabric import Connection
 
 # Define database connection parameters
-server = '10.0.0.24'
-database = 'patching'
-username = 'sa'
-password = ''
+with open('sqlcreds.json') as f:
+    servcreds = json.load(f)
 
 # Connect to SQL database
-conn = pymssql.connect(server=server, database=database, user=username, password=password)
+conn = pymssql.connect(server=servcreds['server'], database=servcreds["database"], user=servcreds["username"], password=servcreds['password'])
 
 # Define SQL query
 #insertsql = "INSERT INTO [dbo].[servers] ([servername],[ipaddress],[patchingstatus],[rebootreq]) VALUES ('testserver','testip','Patched','False')"
@@ -47,6 +46,6 @@ with conn.cursor() as cursor:
         print()
 
         # Connect to server using Fabric and run apt update
-        with Connection(ipaddress) as c:
-            c.sudo(command)
-            c.sudo('sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove && sudo apt-get autoclean')
+        # with Connection(ipaddress) as c:
+        #     c.sudo(command)
+        #     c.sudo('sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove && sudo apt-get autoclean')
