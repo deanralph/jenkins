@@ -11,8 +11,7 @@ with open('sqlcreds.json') as f:
 conn = pymssql.connect(server=servcreds['server'], database=servcreds["database"], user=servcreds["username"], password=servcreds['password'])
 
 # Define SQL query
-#insertsql = "INSERT INTO [dbo].[servers] ([servername],[ipaddress],[patchingstatus],[rebootreq]) VALUES ('testserver','testip','Patched','False')"
-sql = "SELECT servername, ipaddress FROM servers"
+sql = "SELECT servername, ipaddress FROM servers where patchingstatus = 'Unpatched'"
 
 command = """if [ -f /var/run/reboot-required ] 
 then
