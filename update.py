@@ -4,7 +4,7 @@ import json
 from fabric import Connection
 
 # Define database connection parameters
-with open('sqlcreds.json') as f:
+with open('/jenkins/sqlcreds.json') as f:
     servcreds = json.load(f)
 
 # Connect to SQL database
