@@ -13,11 +13,6 @@ conn = pymssql.connect(server=servcreds['server'], database=servcreds["database"
 # Define SQL query
 sql = "SELECT servername, ipaddress FROM servers where patchingstatus = 'Unpatched'"
 
-command = """if [ -f /var/run/reboot-required ] 
-then
-    echo "[*** Hello $USER, you must reboot your machine ***]"
-fi"""
-
 def ping(host):
     """
     Returns True if host responds to a ping request, False otherwise.
@@ -46,5 +41,4 @@ with conn.cursor() as cursor:
 
         # Connect to server using Fabric and run apt update
         with Connection(ipaddress) as c:
-            c.sudo(command)
             c.sudo('sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt-get autoremove && sudo apt-get autoclean')
