@@ -13,11 +13,11 @@ def ping(host):
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return result.returncode == 0
 
-def updateDB(serverIP, dbconn, state):
+def updateDB(serverIP, state):
     """
     Updates reboot required field in DB
     """
-    insertsql = f"UPDATE dbo.servers SET rebootreq = '{state}' WHERE ipaddress = '{serverIP}'"
+    insertsql = f"UPDATE dbo.servers SET patchingstatus = '{state}' WHERE ipaddress = '{serverIP}'"
 
     with pymssql.connect(server=servcreds['server'], database=servcreds["database"], user=servcreds["username"], password=servcreds['password']) as dbconn:
         with dbconn.cursor() as dbcursor:
@@ -48,12 +48,12 @@ with conn.cursor() as cursor:
             print("Server Offline")
     
         with Connection(ipaddress) as sshconn:
-            result = sshconn.run('test -e /var/run/reboot-required && echo true || echo false', hide=True)
+            result = sshconn.sudo("apt-get -s dist-upgrade | grep '^Inst' | wc -l", hide=True)
             if result.stdout.strip() == 'true':
-                print('The server needs a reboot')
-                updateDB(ipaddress, conn, 'True')
+                print('Outstanding Patches Found')
+                updateDB(ipaddress, 'Unpatched')
             else:
-                print('The server does not need a reboot')
-                updateDB(ipaddress, conn, 'False')
+                print('No Outstanding Patches Found')
+                updateDB(ipaddress, 'Patched')
 
         print()

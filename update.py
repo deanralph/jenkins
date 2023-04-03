@@ -46,6 +46,6 @@ with conn.cursor() as cursor:
         print()
 
         # Connect to server using Fabric and run apt update
-        # with Connection(ipaddress) as c:
-        #     c.sudo(command)
-        #     c.sudo('sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove && sudo apt-get autoclean')
+        with Connection(ipaddress) as c:
+            c.sudo(command)
+            c.sudo('sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt-get autoremove && sudo apt-get autoclean')
