@@ -83,15 +83,6 @@ echo "Setting up Jenkins SSH"
 ServerIP=$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}')
 JenkinsURL="http://10.0.0.26:8080/job/SSHKey/buildWithParameters?token=sshkeys&ServerIP=$ServerIP"
 
-curl -u dean:$apiToken "$JenkinsURL"
+echo $JenkinsURL
 
-# Get the hostname of the server
-# hostname=$(hostname)
-
-# # Rename the private ssh key to include the hostname
-# cp /home/jenkins/.ssh/id_rsa /home/jenkins/.ssh/id_rsa_$HOSTNAME
-
-# uploadURL="http://10.0.0.27:8080/sshkeys/id_rsa_$HOSTNAME"
-
-# # Push the private key to WebDAV server using curl
-# curl -T /home/jenkins/.ssh/id_rsa_$HOSTNAME $uploadURL
+curl -u dean:$apiToken $JenkinsURL
