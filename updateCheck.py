@@ -49,8 +49,8 @@ with conn.cursor() as cursor:
     
         with Connection(ipaddress) as sshconn:
             result = sshconn.sudo("apt-get -s dist-upgrade | grep '^Inst' | wc -l", hide=True)
-            if result.stdout.strip() == 'true':
-                print('Outstanding Patches Found')
+            if result.stdout.strip().isdigit():
+                print(f'{result.stdout.strip()} Outstanding Patches Found')
                 updateDB(ipaddress, 'Unpatched')
             else:
                 print('No Outstanding Patches Found')
