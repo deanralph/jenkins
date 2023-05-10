@@ -44,16 +44,15 @@ with conn.cursor() as cursor:
 
         if ping(ipaddress):
             print("Server Online")
+            with Connection(ipaddress) as sshconn:
+                result = sshconn.run('test -e /var/run/reboot-required && echo true || echo false', hide=True)
+                if result.stdout.strip() == 'true':
+                    print('The server needs a reboot')
+                    updateDB(ipaddress, conn, 'True')
+                else:
+                    print('The server does not need a reboot')
+                    updateDB(ipaddress, conn, 'False')
         else:
             print("Server Offline")
-    
-        with Connection(ipaddress) as sshconn:
-            result = sshconn.run('test -e /var/run/reboot-required && echo true || echo false', hide=True)
-            if result.stdout.strip() == 'true':
-                print('The server needs a reboot')
-                updateDB(ipaddress, conn, 'True')
-            else:
-                print('The server does not need a reboot')
-                updateDB(ipaddress, conn, 'False')
 
         print()
