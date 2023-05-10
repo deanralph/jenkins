@@ -34,11 +34,12 @@ with conn.cursor() as cursor:
 
         if ping(ipaddress):
             print("Server Online")
+            
+            # Connect to server using Fabric and run apt update
+            with Connection(ipaddress) as c:
+                c.sudo('sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt-get autoremove && sudo apt-get autoclean')
+                
         else:
             print("Server Offline")
         
         print()
-
-        # Connect to server using Fabric and run apt update
-        with Connection(ipaddress) as c:
-            c.sudo('sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt-get autoremove && sudo apt-get autoclean')
