@@ -80,7 +80,7 @@ chmod -R 777 /jenkins
 echo
 echo "Setting up Jenkins SSH"
 
-ServerIP=$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}')
+ServerIP=$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | grep -v '172*'| awk '{print $2}')
 JenkinsURL="http://10.0.0.26:8080/job/SSHKey/buildWithParameters?token=sshkeys&ServerIP=$ServerIP"
 
 echo $JenkinsURL
