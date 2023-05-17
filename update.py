@@ -35,7 +35,7 @@ with conn.cursor() as cursor:
             
             # Connect to server using Fabric and run apt update
             with Connection(ipaddress) as c:
-                c.sudo('sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y')
+                c.sudo('sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt-get autoremove -y && sudo apt-get autoclean -y')
                 
         else:
             print("Server Offline")
