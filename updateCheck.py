@@ -23,7 +23,7 @@ def updateDB(serverIP, state, totalUpdates):
     with pymssql.connect(server=servcreds['server'], database=servcreds["database"], user=servcreds["username"], password=servcreds['password']) as dbconn:
         with dbconn.cursor() as dbcursor:
             dbcursor.execute(insertsql)
-            dbcursor.execute(insertcount)
+            dbcursor.execute(insertsqlcount)
             dbconn.commit()
 
 
