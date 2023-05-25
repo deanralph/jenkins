@@ -13,15 +13,17 @@ def ping(host):
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return result.returncode == 0
 
-def updateDB(serverIP, state):
+def updateDB(serverIP, state, totalUpdates):
     """
     Updates reboot required field in DB
     """
     insertsql = f"UPDATE dbo.servers SET patchingstatus = '{state}' WHERE ipaddress = '{serverIP}'"
+    insertsqlcount = f"INSERT INTO outstandingPatches (ipaddress ,outstandingPatches) values ('{serverIP}', {totalUpdates}) ON DUPLICATE KEY UPDATE `outstandingPatches` = {totalUpdates}"
 
     with pymssql.connect(server=servcreds['server'], database=servcreds["database"], user=servcreds["username"], password=servcreds['password']) as dbconn:
         with dbconn.cursor() as dbcursor:
             dbcursor.execute(insertsql)
+            dbcursor.execute(insertcount)
             dbconn.commit()
 
 
@@ -47,12 +49,13 @@ with conn.cursor() as cursor:
 
             with Connection(ipaddress) as sshconn:
                 result = sshconn.sudo("apt-get -s dist-upgrade | grep '^Inst' | wc -l", hide=True)
-                if result.stdout.strip().isdigit():
+                noOfUpdate = result.stdout.strip()
+                if noOfUpdate.isdigit():
                     print(f'{result.stdout.strip()} Outstanding Patches Found')
-                    updateDB(ipaddress, 'Unpatched')
+                    updateDB(ipaddress, 'Unpatched', noOfUpdate)
                 else:
                     print('No Outstanding Patches Found')
-                    updateDB(ipaddress, 'Patched')
+                    updateDB(ipaddress, 'Patched', 0)
 
         else:
             print("Server Offline")
