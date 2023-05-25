@@ -18,7 +18,14 @@ def updateDB(serverIP, state, totalUpdates):
     Updates reboot required field in DB
     """
     insertsql = f"UPDATE dbo.servers SET patchingstatus = '{state}' WHERE ipaddress = '{serverIP}'"
-    insertsqlcount = f"INSERT INTO outstandingPatches (ipaddress ,outstandingPatches) values ('{serverIP}', {totalUpdates}) ON DUPLICATE KEY UPDATE `outstandingPatches` = {totalUpdates}"
+    insertsqlcount = f"""IF EXISTS (SELECT * FROM outstandingPatches WHERE ipaddress = '{serverIP}')
+BEGIN
+    UPDATE outstandingPatches SET outstandingPatches = {totalUpdates} WHERE ipaddress = '{serverIP}'
+END
+ELSE
+BEGIN
+   INSERT INTO outstandingPatches (ipaddress ,outstandingPatches) values ('{serverIP}', {totalUpdates})
+END"""
 
     with pymssql.connect(server=servcreds['server'], database=servcreds["database"], user=servcreds["username"], password=servcreds['password']) as dbconn:
         with dbconn.cursor() as dbcursor:
