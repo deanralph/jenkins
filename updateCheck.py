@@ -30,6 +30,7 @@ END"""
     with pymssql.connect(server=servcreds['server'], database=servcreds["database"], user=servcreds["username"], password=servcreds['password']) as dbconn:
         with dbconn.cursor() as dbcursor:
             dbcursor.execute(insertsql)
+            dbconn.commit()
             dbcursor.execute(insertsqlcount)
             dbconn.commit()
 
