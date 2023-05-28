@@ -67,5 +67,6 @@ with conn.cursor() as cursor:
 
         else:
             print("Server Offline")
+            updateDB(ipaddress, 'Offline', 0)
 
         print()
